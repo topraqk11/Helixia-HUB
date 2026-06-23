@@ -518,10 +518,23 @@ ScreenGui.Parent         = PlayerGui
 
 local uiScale = Instance.new("UIScale")
 uiScale.Parent = ScreenGui
+local function isMobile()
+	local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1920, 1080)
+	return vp.X < 800 or vp.Y > vp.X
+end
 local function updateScale()
 	local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1920, 1080)
-	local ratio = math.min(vp.X / 1050, vp.Y / 620)
-	uiScale.Scale = math.clamp(ratio, 0.85, 1.40)
+	local mobile = isMobile()
+	if mobile then
+		local shortSide = math.min(vp.X, vp.Y)
+		local ratio = shortSide / 600
+		local scale = math.clamp(ratio, 0.38, 0.70)
+		scale *= 1.05
+		uiScale.Scale = math.clamp(scale, 0.38, 0.75)
+	else
+		local ratio = math.min(vp.X / 1050, vp.Y / 620)
+		uiScale.Scale = math.clamp(ratio, 0.85, 1.40)
+	end
 end
 updateScale()
 RunService.Heartbeat:Connect(updateScale)
@@ -578,8 +591,9 @@ local function createFloatingToggle(win, theme)
 
 	local toggle = Instance.new("Frame")
 	toggle.Name                   = "FloatingToggle"
-	toggle.Size                   = UDim2.fromOffset(58, 58)
-	toggle.Position               = UDim2.fromOffset(vp.X - 95, vp.Y - 180)
+	toggle.Size                   = UDim2.fromScale(0.07, 0.07)
+	toggle.Position               = UDim2.new(1, -70, 1, -130)
+	toggle.SizeConstraint         = Enum.SizeConstraint.RelativeXX
 	toggle.BackgroundColor3       = theme.Palette.Surface
 	toggle.BackgroundTransparency = 1
 	toggle.BorderSizePixel        = 0
@@ -606,7 +620,7 @@ local function createFloatingToggle(win, theme)
 	icon.BackgroundTransparency = 1
 	icon.Image                  = Icons.Window
 	icon.ImageColor3            = theme.Palette.Accent
-	icon.Size                   = UDim2.fromOffset(40, 40)
+	icon.Size                   = UDim2.fromScale(0.68, 0.68)
 	icon.AnchorPoint             = Vector2.new(0.5, 0.5)
 	icon.Position                = UDim2.fromScale(0.5, 0.5)
 	icon.ZIndex                  = toggle.ZIndex + 1
@@ -670,7 +684,7 @@ end
 local Window = {}
 Window.__index = Window
 
-local MIN_WINDOW_SIZE = Vector2.new(560, 420)
+local MIN_WINDOW_SIZE = Vector2.new(420, 320)
 
 local PROFILE_SECTION_HEIGHT = 58
 
@@ -689,9 +703,13 @@ function HelixiaHUB:CreateWindow(config)
 	self_.Dragging   = false
 	self_._order     = 0
 
+	local _vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1280, 720)
+	local _defaultW = config.Size and config.Size.X or math.clamp(_vp.X * 0.88, 420, 960)
+	local _defaultH = config.Size and config.Size.Y or math.clamp(_vp.Y * 0.82, 320, 640)
+
 	local root = Instance.new("Frame")
 	root.Name                 = "Window"
-	root.Size                 = UDim2.fromOffset(config.Size and config.Size.X or 960, config.Size and config.Size.Y or 640)
+	root.Size                 = UDim2.fromOffset(_defaultW, _defaultH)
 	root.Position             = UDim2.new(0.5, 0, 0.5, 0)
 	root.AnchorPoint          = Vector2.new(0.5, 0.5)
 	root.BackgroundColor3     = theme.Palette.Background
@@ -753,8 +771,8 @@ function HelixiaHUB:CreateWindow(config)
 	winIcon.BackgroundTransparency = 1
 	winIcon.Image                  = config.Icon or Icons.Window
 	winIcon.ImageColor3            = theme.Palette.Accent
-	winIcon.Size                   = UDim2.fromOffset(37, 37)
-	winIcon.Position               = UDim2.new(0, 14, 0.5, 0)
+	winIcon.Size                   = UDim2.new(0, 32, 0.6, 0)
+	winIcon.Position               = UDim2.new(0, 12, 0.5, 0)
 	winIcon.AnchorPoint            = Vector2.new(0, 0.5)
 	winIcon.ZIndex                 = titleBar.ZIndex + 1
 	winIcon.Parent                 = titleBar
@@ -798,8 +816,8 @@ function HelixiaHUB:CreateWindow(config)
 	local controls = Instance.new("Frame")
 	controls.Name                   = "WindowControls"
 	controls.BackgroundTransparency = 1
-	controls.Size     = UDim2.fromOffset(76, 34)
-	controls.Position = UDim2.new(1, -16, 0.5, 0)
+	controls.Size     = UDim2.new(0, 76, 0.65, 0)
+	controls.Position = UDim2.new(1, -14, 0.5, 0)
 	controls.AnchorPoint = Vector2.new(1, 0.5)
 	controls.ZIndex   = titleBar.ZIndex + 1
 	controls.Parent   = titleBar
@@ -812,7 +830,7 @@ function HelixiaHUB:CreateWindow(config)
 
 	local function makeControlButton(iconSprite, hoverColor, iconSize)
 		local btn = Instance.new("TextButton")
-		btn.Size                 = UDim2.fromOffset(30, 30)
+		btn.Size                 = UDim2.new(0, 30, 0.62, 0)
 		btn.BackgroundColor3     = theme.Palette.SurfaceAlt
 		btn.BackgroundTransparency = 0.3
 		btn.AutoButtonColor      = false
@@ -866,7 +884,7 @@ function HelixiaHUB:CreateWindow(config)
 	body.Parent               = root
 	self_.Body                = body
 
-	local SIDEBAR_WIDTH = 196
+	local SIDEBAR_WIDTH = 170
 	local sidebar = Instance.new("Frame")
 	sidebar.Name                  = "Sidebar"
 	sidebar.BackgroundColor3      = theme.Palette.Surface
@@ -889,8 +907,8 @@ function HelixiaHUB:CreateWindow(config)
 	searchBox.Name                   = "SearchBox"
 	searchBox.BackgroundColor3       = theme.Palette.SurfaceAlt
 	searchBox.BackgroundTransparency = 0.2
-	searchBox.Size                   = UDim2.new(1, -22, 0, 34)
-	searchBox.Position               = UDim2.new(0, 11, 0, 12)
+	searchBox.Size                   = UDim2.new(1, -18, 0, 30)
+	searchBox.Position               = UDim2.new(0, 9, 0, 10)
 	searchBox.ZIndex                 = sidebar.ZIndex + 1
 	searchBox.Parent                 = sidebar
 	Util.Corner(searchBox, 9)
@@ -929,8 +947,8 @@ function HelixiaHUB:CreateWindow(config)
 	local tabList = Instance.new("Frame")
 	tabList.Name                  = "TabList"
 	tabList.BackgroundTransparency = 1
-	tabList.Position              = UDim2.new(0, 0, 0, 58)
-	tabList.Size                  = UDim2.new(1, 0, 1, -(58 + PROFILE_SECTION_HEIGHT + 1))
+	tabList.Position              = UDim2.new(0, 0, 0, 50)
+	tabList.Size                  = UDim2.new(1, 0, 1, -(50 + PROFILE_SECTION_HEIGHT + 1))
 	tabList.ZIndex                = sidebar.ZIndex + 1
 	tabList.Parent                = sidebar
 	local tabLayout = Instance.new("UIListLayout")
@@ -943,7 +961,7 @@ function HelixiaHUB:CreateWindow(config)
 	indicator.Name                   = "ActiveTabIndicator"
 	indicator.BackgroundColor3       = theme.Palette.Accent
 	indicator.BackgroundTransparency = 0.82
-	indicator.Size                   = UDim2.new(1, 0, 0, 38)
+	indicator.Size                   = UDim2.new(1, 0, 0, 34)
 	indicator.ZIndex                 = tabList.ZIndex
 	indicator.Visible                = false
 	indicator.Parent                 = tabList
@@ -972,7 +990,7 @@ function HelixiaHUB:CreateWindow(config)
 	profileSection.Parent                 = sidebar
 	profileSection.ClipsDescendants       = true
 
-	local AVATAR_SIZE = 30
+	local AVATAR_SIZE = 28
 	local avatarClip = Instance.new("Frame")
 	avatarClip.Name                   = "AvatarClip"
 	avatarClip.BackgroundColor3       = theme.Palette.SurfaceAlt
@@ -1067,7 +1085,7 @@ function HelixiaHUB:CreateWindow(config)
 	contentArea.ZIndex                = body.ZIndex
 	contentArea.Parent                = body
 
-	Util.Padding(contentArea, 16, 24, 16, 16)
+	Util.Padding(contentArea, 12, 18, 12, 12)
 	self_.ContentArea = contentArea
 
 	local contentAreaLayout = Instance.new("UIListLayout")
@@ -1229,9 +1247,9 @@ function Window:Minimize()
 
 	local toggle = createFloatingToggle(self, self.Theme)
 	toggle.Visible = true
-	toggle.Size    = UDim2.fromOffset(38, 38)
+	toggle.Size    = UDim2.fromScale(0.045, 0.045)
 	toggle.BackgroundTransparency = 1
-	Util.Tween(toggle, { Size = UDim2.fromOffset(58, 58), BackgroundTransparency = 0.05 }, 0.3, Enum.EasingStyle.Back)
+	Util.Tween(toggle, { Size = UDim2.fromScale(0.07, 0.07), BackgroundTransparency = 0.05 }, 0.3, Enum.EasingStyle.Back)
 end
 
 function Window:Restore()
@@ -1255,7 +1273,7 @@ function Window:Restore()
 
 	local toggle = self.FloatingToggle
 	if toggle then
-		Util.Tween(toggle, { Size = UDim2.fromOffset(38, 38), BackgroundTransparency = 1 }, 0.22, Enum.EasingStyle.Quad)
+		Util.Tween(toggle, { Size = UDim2.fromScale(0.045, 0.045), BackgroundTransparency = 1 }, 0.22, Enum.EasingStyle.Quad)
 		task.delay(0.22, function()
 			if toggle and not self.Minimized then
 				toggle.Visible = false
@@ -1304,7 +1322,7 @@ function Window:CreateTab(config)
 
 	local btn = Instance.new("TextButton")
 	btn.Name                 = tabData.Name
-	btn.Size                 = UDim2.new(1, 0, 0, 38)
+	btn.Size                 = UDim2.new(1, 0, 0, 34)
 	btn.BackgroundTransparency = 1
 	btn.Text                 = ""
 	btn.AutoButtonColor      = false
@@ -1377,8 +1395,6 @@ function Window:CreateTab(config)
 	end)
 
 	table.insert(self.Tabs, tabData)
-
-	print(tabData)
 
 	if #self.Tabs == 1 then
 		self:SelectTab(tabData)
@@ -2660,8 +2676,8 @@ local notifyContainer = Instance.new("Frame")
 notifyContainer.Name                 = "Notifications"
 notifyContainer.BackgroundTransparency = 1
 notifyContainer.AnchorPoint          = Vector2.new(1, 1)
-notifyContainer.Position             = UDim2.new(1, -22, 1, -22)
-notifyContainer.Size                 = UDim2.fromOffset(360, 700)
+notifyContainer.Position             = UDim2.new(1, -12, 1, -12)
+notifyContainer.Size                 = UDim2.new(0.38, 0, 0.85, 0)
 notifyContainer.ZIndex               = 5000
 notifyContainer.Parent               = ScreenGui
 local notifyLayout = Instance.new("UIListLayout")
