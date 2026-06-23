@@ -672,6 +672,8 @@ Window.__index = Window
 
 local MIN_WINDOW_SIZE = Vector2.new(560, 420)
 
+local PROFILE_SECTION_HEIGHT = 58
+
 function HelixiaHUB:CreateWindow(config)
 	config = config or {}
 	local theme = self.Theme
@@ -852,7 +854,7 @@ function HelixiaHUB:CreateWindow(config)
 	minimizeBtn.LayoutOrder = 1
 
 	local closeBtn, closeImg = makeControlButton(Sprites.Close, theme.Palette.Danger, UDim2.fromOffset(14, 14))
-	closeBtn.Name = "CloseButton" 
+	closeBtn.Name = "CloseButton"
 	closeBtn.LayoutOrder = 2
 
 	local body = Instance.new("Frame")
@@ -928,7 +930,7 @@ function HelixiaHUB:CreateWindow(config)
 	tabList.Name                  = "TabList"
 	tabList.BackgroundTransparency = 1
 	tabList.Position              = UDim2.new(0, 0, 0, 58)
-	tabList.Size                  = UDim2.new(1, 0, 1, -58)
+	tabList.Size                  = UDim2.new(1, 0, 1, -(58 + PROFILE_SECTION_HEIGHT + 1))
 	tabList.ZIndex                = sidebar.ZIndex + 1
 	tabList.Parent                = sidebar
 	local tabLayout = Instance.new("UIListLayout")
@@ -949,6 +951,112 @@ function HelixiaHUB:CreateWindow(config)
 	local indicatorStroke = Util.Stroke(indicator, theme.Palette.Accent, 1, 0.55)
 	self_.Indicator = indicator
 	self_.IndicatorStroke = indicatorStroke
+
+	local profileSep = Instance.new("Frame")
+	profileSep.Name                   = "ProfileSeparator"
+	profileSep.BackgroundColor3       = theme.Palette.Border
+	profileSep.BackgroundTransparency = 0.78
+	profileSep.BorderSizePixel        = 0
+	profileSep.Size                   = UDim2.new(1, -22, 0, 1)
+	profileSep.Position               = UDim2.new(0, 11, 1, -(PROFILE_SECTION_HEIGHT + 1))
+	profileSep.ZIndex                 = sidebar.ZIndex + 1
+	profileSep.Parent                 = sidebar
+
+	local profileSection = Instance.new("Frame")
+	profileSection.Name                   = "ProfileSection"
+	profileSection.BackgroundTransparency = 1
+	profileSection.BorderSizePixel        = 0
+	profileSection.Size                   = UDim2.new(1, 0, 0, PROFILE_SECTION_HEIGHT)
+	profileSection.Position               = UDim2.new(0, 0, 1, -PROFILE_SECTION_HEIGHT)
+	profileSection.ZIndex                 = sidebar.ZIndex + 1
+	profileSection.Parent                 = sidebar
+	profileSection.ClipsDescendants       = true
+
+	local AVATAR_SIZE = 30
+	local avatarClip = Instance.new("Frame")
+	avatarClip.Name                   = "AvatarClip"
+	avatarClip.BackgroundColor3       = theme.Palette.SurfaceAlt
+	avatarClip.BackgroundTransparency = 0.2
+	avatarClip.BorderSizePixel        = 0
+	avatarClip.ZIndex = 2
+	avatarClip.Size                   = UDim2.fromOffset(AVATAR_SIZE, AVATAR_SIZE)
+	avatarClip.Position               = UDim2.new(0, 12, 0.5, 0)
+	avatarClip.AnchorPoint            = Vector2.new(0, 0.5)
+	avatarClip.ClipsDescendants       = true
+	avatarClip.ZIndex                 = profileSection.ZIndex + 1
+	avatarClip.Parent                 = profileSection
+	Util.Corner(avatarClip, 999)
+	local avatarStroke = Util.Stroke(avatarClip, theme.Palette.Accent, 1.5, 0.55)
+
+	local avatarImg = Instance.new("ImageLabel")
+	avatarImg.Name                   = "AvatarImage"
+	avatarImg.BackgroundTransparency = 1
+	avatarImg.Image                  = ""
+	avatarImg.ZIndex = 1
+	avatarImg.Size                   = UDim2.fromScale(1, 1)
+	avatarImg.ScaleType              = Enum.ScaleType.Crop
+	avatarImg.ZIndex                 = avatarClip.ZIndex + 1
+	avatarImg.Parent                 = avatarClip
+
+	local profileText = Instance.new("Frame")
+	profileText.Name                   = "ProfileText"
+	profileText.BackgroundTransparency = 1
+	profileText.BorderSizePixel        = 0
+	profileText.Position               = UDim2.new(0, 12 + AVATAR_SIZE + 9, 0.5, 0)
+	profileText.AnchorPoint            = Vector2.new(0, 0.5)
+	profileText.Size                   = UDim2.new(1, -(12 + AVATAR_SIZE + 9 + 10), 0, 36)
+	profileText.ZIndex                 = profileSection.ZIndex + 1
+	profileText.Parent                 = profileSection
+
+	local displayNameLabel = Instance.new("TextLabel")
+	displayNameLabel.Name                   = "DisplayName"
+	displayNameLabel.BackgroundTransparency = 1
+	displayNameLabel.Text               = LocalPlayer.DisplayName
+	displayNameLabel.Font               = theme.FontBold
+	displayNameLabel.TextSize           = 13
+	displayNameLabel.TextColor3         = theme.Palette.Text
+	displayNameLabel.TextXAlignment     = Enum.TextXAlignment.Left
+	displayNameLabel.TextTruncate       = Enum.TextTruncate.AtEnd
+	displayNameLabel.Size               = UDim2.new(1, 0, 0, 18)
+	displayNameLabel.Position           = UDim2.new(0, 0, 0, 0)
+	displayNameLabel.ZIndex             = profileText.ZIndex
+	displayNameLabel.Parent             = profileText
+
+	local usernameLabel = Instance.new("TextLabel")
+	usernameLabel.Name                   = "Username"
+	usernameLabel.BackgroundTransparency = 1
+	usernameLabel.Text               = "@" .. LocalPlayer.Name
+	usernameLabel.Font               = theme.Font
+	usernameLabel.TextSize           = 11
+	usernameLabel.TextColor3         = theme.Palette.TextFaint
+	usernameLabel.TextXAlignment     = Enum.TextXAlignment.Left
+	usernameLabel.TextTruncate       = Enum.TextTruncate.AtEnd
+	usernameLabel.Size               = UDim2.new(1, 0, 0, 14)
+	usernameLabel.Position           = UDim2.new(0, 0, 0, 20)
+	usernameLabel.ZIndex             = profileText.ZIndex
+	usernameLabel.Parent             = profileText
+
+	task.spawn(function()
+		local ok, url = pcall(function()
+			return Players:GetUserThumbnailAsync(
+				LocalPlayer.UserId,
+				Enum.ThumbnailType.HeadShot,
+				Enum.ThumbnailSize.Size420x420,
+				true
+			)
+		end)
+		if ok and url then
+			avatarImg.Image = url
+		end
+	end)
+
+	theme:Register(function(t)
+		profileSep.BackgroundColor3        = t.Palette.Border
+		avatarClip.BackgroundColor3        = t.Palette.SurfaceAlt
+		avatarStroke.Color                 = t.Palette.Accent
+		displayNameLabel.TextColor3        = t.Palette.Text
+		usernameLabel.TextColor3           = t.Palette.TextFaint
+	end)
 
 	local contentArea = Instance.new("Frame")
 	contentArea.Name                  = "ContentArea"
