@@ -159,3 +159,251 @@ GameTab:CreateButton({
         game:GetService("ReplicatedStorage"):WaitForChild("SpawnGalaxyBlock"):FireServer()
     end,
 })
+
+
+
+
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/topraqk1/helixia-hub/refs/heads/main/Scripts/library.lua"))()
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local plr = game.Players.LocalPlayer
+
+_G.autoOrbFarm = false
+_G.autoGemFarm = false
+_G.autoRebirth = false
+
+local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Unknown Game"
+
+local Window = Rayfield:CreateWindow({
+    Name = "Helixia Hub | " .. gameName,
+    Icon = "gamepad",
+    LoadingTitle = "Helixia Hub",
+    LoadingSubtitle = "discord.gg/JRzMYAWvUZ",
+    Theme = "Default",
+
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false,
+
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "HelixiaHub",
+        FileName = "Config"
+    },
+
+    Discord = {
+        Enabled = false,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+
+    KeySystem = false,
+    KeySettings = {
+        Title = "Helixia Hub",
+        Subtitle = "Key System",
+        Note = "Anahtar almak için özel bilgi verilmemiş",
+        FileName = "Key",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = { "Hello" }
+    }
+})
+
+local MainTab = Window:CreateTab("Home", "home")
+MainTab:CreateSection("General")
+
+MainTab:CreateButton({
+    Name = "Rejoin Server",
+    Callback = function()
+        local ts = game:GetService("TeleportService")
+        local placeId = game.PlaceId
+        ts:Teleport(placeId, plr)
+    end,
+})
+
+MainTab:CreateButton({
+    Name = "Hop to New Server",
+    Callback = function()
+        local HttpService = game:GetService("HttpService")
+        local TeleportService = game:GetService("TeleportService")
+        local Servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" ..
+            game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100")).data
+
+        for _, v in pairs(Servers) do
+            if v.playing < v.maxPlayers then
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, v.id, plr)
+                break
+            end
+        end
+    end,
+})
+
+local PlayerTab = Window:CreateTab("Player", "user")
+PlayerTab:CreateSection("Player Settings")
+
+local character = function() return plr.Character or plr.CharacterAdded:Wait() end
+
+PlayerTab:CreateSlider({
+    Name = "Walk Speed",
+    Range = { 16, 250 },
+    Increment = 1,
+    CurrentValue = 16,
+    Flag = "Slider1",
+    Callback = function(Value)
+        character():WaitForChild("Humanoid").WalkSpeed = Value
+    end,
+})
+
+PlayerTab:CreateSlider({
+    Name = "Jump Power",
+    Range = { 50, 300 },
+    Increment = 5,
+    CurrentValue = 50,
+    Flag = "Slider1",
+    Callback = function(Value)
+        character():WaitForChild("Humanoid").JumpPower = Value
+    end,
+})
+
+local infiniteJumpEnabled = false
+
+PlayerTab:CreateToggle({
+    Name = "Infinite Jump",
+    CurrentValue = false,
+    Callback = function(Value)
+        infiniteJumpEnabled = Value
+        if infiniteJumpEnabled then
+            Rayfield:Notify({
+                Title = "Infinite Jump",
+                Content = "Enabled",
+                Duration = 3
+            })
+        else
+            Rayfield:Notify({
+                Title = "Infinite Jump",
+                Content = "Disabled",
+                Duration = 3
+            })
+        end
+    end,
+})
+
+local UIS = game:GetService("UserInputService")
+UIS.JumpRequest:Connect(function()
+    if infiniteJumpEnabled then
+        character():WaitForChild("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+local GameTab = Window:CreateTab("Game", "crosshair")
+
+local codes = {
+  "swiftjungle1000",
+  "speedchampion000",
+  "SPRINT250",
+  "hyper250",
+  "racer300",
+  "Launch200",
+  "sparkles300",
+  "legends500"
+}
+
+function useCode(code)
+	local args = {
+		code
+	}
+
+	game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("codeRemote"):InvokeServer(unpack(args))
+end
+
+GameTab:CreateButton({
+    Name = "Use All Codes",
+    Callback = function()
+        for _, code in ipairs(codes) do
+            useCode(code)
+            task.wait(0.3)
+        end
+        Rayfield:Notify({
+            Title = "Codes",
+            Content = "All codes used!",
+            Duration = 4
+        })
+    end
+})
+
+local FarmTab = Window:CreateTab("Auto Farm", "bolt")
+
+function collectOrb(orbColor, map)
+    orbColor = orbColor or "Red"
+    map = map or "City"
+
+    local args = {
+        "collectOrb",
+        orbColor .. " Orb",
+        map
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("orbEvent"):FireServer(unpack(args))
+end
+
+function collectGem(map)
+    map = map or "City"
+
+    local args = {
+        "collectOrb",
+        "Gem",
+        map
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("orbEvent"):FireServer(unpack(args))
+end
+
+function rebirth()
+    local args = {
+	    "rebirthRequest"
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("rebirthEvent"):FireServer(unpack(args))
+end
+
+FarmTab:CreateToggle({
+    Name = "Orb Farm",
+    CurrentValue = false,
+    Callback = function(Value)
+        _G.autoOrbFarm = Value
+
+        while _G.autoOrbFarm do
+            for i = 1, 1000 do
+                collectOrb()
+            end
+            task.wait(0.1)
+        end
+    end
+})
+
+FarmTab:CreateToggle({
+    Name = "Gem Farm",
+    CurrentValue = false,
+    Callback = function(Value)
+        _G.autoGemFarm = Value
+
+        while _G.autoGemFarm do
+            for i = 1, 1000 do
+                collectGem()
+            end
+            task.wait(0.1)
+        end
+    end
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Rebirth",
+    CurrentValue = false,
+    Callback = function(Value)
+        _G.autoRebirth = Value
+
+        while _G.autoRebirth do
+            rebirth()
+            task.wait(0.1)
+        end
+    end
+})
