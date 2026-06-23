@@ -6,7 +6,7 @@ A modern, themeable UI library for Roblox — built with clean animations, a ful
 
 ## Preview
 
-<img width="1030" height="600" alt="image" src="https://github.com/user-attachments/assets/885be31c-da4b-45d6-8624-78a91a1d80b3" />
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/885be31c-da4b-45d6-8624-78a91a1d80b3" />
 
 ---
 
