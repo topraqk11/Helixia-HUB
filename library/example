@@ -1,4 +1,4 @@
-local HelixiaHUB = loadstring(HttpGet("https://raw.githubusercontent.com/topraqk11/Helixia-HUB/refs/heads/main/library/source"))()
+local HelixiaHUB = loadstring(game:HttpGet("https://raw.githubusercontent.com/topraqk11/Helixia-HUB/refs/heads/main/library/source"))()
 
 local win = HelixiaHUB:CreateWindow({
 	Title    = "Helixia HUB",
