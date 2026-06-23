@@ -525,12 +525,13 @@ end
 local function updateScale()
 	local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1920, 1080)
 	local mobile = isMobile()
+
 	if mobile then
 		local shortSide = math.min(vp.X, vp.Y)
 		local ratio = shortSide / 600
 		local scale = math.clamp(ratio, 0.38, 0.70)
-		scale *= 1.05
-		uiScale.Scale = math.clamp(scale, 0.38, 0.75)
+		scale *= 0.97
+		uiScale.Scale = math.clamp(scale, 0.36, 0.72)
 	else
 		local ratio = math.min(vp.X / 1050, vp.Y / 620)
 		uiScale.Scale = math.clamp(ratio, 0.85, 1.40)
@@ -830,7 +831,7 @@ function HelixiaHUB:CreateWindow(config)
 
 	local function makeControlButton(iconSprite, hoverColor, iconSize)
 		local btn = Instance.new("TextButton")
-		btn.Size                 = UDim2.new(0, 30, 0.62, 0)
+		btn.Size                 = UDim2.new(0, 30, 0.90, 0)
 		btn.BackgroundColor3     = theme.Palette.SurfaceAlt
 		btn.BackgroundTransparency = 0.3
 		btn.AutoButtonColor      = false
