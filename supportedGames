@@ -12,4 +12,9 @@
   "placeId": "3101667897",
   "name": "Legend Of Speed",
   "url": "https://raw.githubusercontent.com/topraqk11/Helixia-HUB/refs/heads/main/games/legend-of-speed.lua"
+},
+{
+  "placeId": "12355337193",
+  "name": "Legend Of Speed",
+  "url": "https://raw.githubusercontent.com/topraqk11/Helixia-HUB/refs/heads/main/games/murderers-vs-sheriffs.lua"
 }]
