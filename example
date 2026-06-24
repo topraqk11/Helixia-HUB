@@ -1,208 +1,219 @@
-local HelixiaHUB = loadstring(game:HttpGet("https://raw.githubusercontent.com/topraqk11/Helixia-HUB/refs/heads/main/library/source"))()
+local HelixiaLIB = loadstring(game:HttpGet("https://raw.githubusercontent.com/topraqk11/Helixia-LIBRARY/refs/heads/main/library/source"))()
 
-local win = HelixiaHUB:CreateWindow({
-	Title    = "Helixia HUB",
-	SubTitle = "Helixia HUB v2.0",
-	Icon     = "rbxassetid://102278873791566",
-	Size     = Vector2.new(860, 540),
+local win = HelixiaLIB:CreateWindow({
+Title = "HELIXIA LIBRARY",
+SubTitle = "HELIXIA LIBRARY v2.0",
+Icon = "rbxassetid://102278873791566",
+Size = Vector2.new(860, 540),
 })
 
 local themeNames = {}
-for name in pairs(HelixiaHUB.Themes) do
-	table.insert(themeNames, name)
+for name in pairs(HelixiaLIB.Themes) do
+  table.insert(themeNames, name)
 end
 table.sort(themeNames)
 
 local generalTab = win:CreateTab({
-	Name = "General",
-	Icon = "rbxassetid://138525646531017",
+Name = "General",
+Icon = "rbxassetid://138525646531017",
 })
 
 generalTab:CreateSection("Welcome", {
-	Description = "Use the tabs on the left to navigate through Helixia HUB's features.",
+Description = "Use the tabs on the left to navigate through HELIXIA LIBRARY's features.",
 })
 
 generalTab:CreateButton({
-	Text        = "Welcome!",
-	Description = "Helixia HUB v2.0 has loaded successfully.",
-	Callback    = function()
-		HelixiaHUB:Notify({
-			Title    = "Helixia HUB",
-			Message  = "Script is active and running.",
-			Type     = "Success",
-			Duration = 3,
-		})
-	end,
+Text = "Welcome!",
+Description = "HELIXIA LIBRARY v2.0 has loaded successfully.",
+
+Callback = function()
+  HelixiaLIB:Notify({
+  Title = "HELIXIA LIBRARY",
+  Message = "Script is active and running.",
+  Type = "Success",
+  Duration = 3,
+  })
+end,
 })
 
 local playerTab = win:CreateTab({
-	Name = "Player",
-	Icon = "rbxassetid://98097754960306",
+Name = "Player",
+Icon = "rbxassetid://98097754960306",
 })
 
 playerTab:CreateSection("Movement")
 
 playerTab:CreateSlider({
-	Text      = "Walk Speed",
-	Min       = 16,
-	Max       = 500,
-	Default   = 16,
-	Increment = 1,
-	Suffix    = " stud/s",
-	Callback  = function(v)
-		local char = game.Players.LocalPlayer.Character
-		if char and char:FindFirstChild("Humanoid") then
-			char.Humanoid.WalkSpeed = v
-		end
-	end,
+Text = "Walk Speed",
+Min = 16,
+Max = 500,
+Default = 16,
+Increment = 1,
+Suffix = " stud/s",
+
+Callback = function(v)
+  local char = game.Players.LocalPlayer.Character
+  if char and char:FindFirstChild("Humanoid") then
+    char.Humanoid.WalkSpeed = v
+  end
+end,
 })
 
 playerTab:CreateSlider({
-	Text      = "Jump Power",
-	Min       = 0,
-	Max       = 500,
-	Default   = 50,
-	Increment = 1,
-	Suffix    = " power",
-	Callback  = function(v)
-		local char = game.Players.LocalPlayer.Character
-		if char and char:FindFirstChild("Humanoid") then
-			char.Humanoid.JumpPower = v
-		end
-	end,
+Text = "Jump Power",
+Min = 0,
+Max = 500,
+Default = 50,
+Increment = 1,
+Suffix = " power",
+
+Callback = function(v)
+  local char = game.Players.LocalPlayer.Character
+  if char and char:FindFirstChild("Humanoid") then
+    char.Humanoid.JumpPower = v
+  end
+end,
 })
 
 playerTab:CreateSection("Abilities")
 
 playerTab:CreateToggle({
-	Text        = "Infinite Jump",
-	Description = "Allows jumping while already in the air",
-	Default     = false,
-	Callback    = function(v)
-		print("Infinite Jump:", v)
+Text = "Infinite Jump",
+Description = "Allows jumping while already in the air",
+Default = false,
 
-	end,
+Callback = function(v)
+  print("Infinite Jump:", v)
+
+end,
 })
 
 playerTab:CreateToggle({
-	Text        = "No Clip",
-	Description = "Allows walking through walls and objects",
-	Default     = false,
-	Callback    = function(v)
-		print("No Clip:", v)
+Text = "No Clip",
+Description = "Allows walking through walls and objects",
+Default = false,
 
-	end,
+Callback = function(v)
+  print("No Clip:", v)
+
+end,
 })
 
 playerTab:CreateToggle({
-	Text        = "God Mode",
-	Description = "Makes the character invincible",
-	Default     = false,
-	Callback    = function(v)
-		print("God Mode:", v)
+Text = "God Mode",
+Description = "Makes the character invincible",
+Default = false,
 
-	end,
+Callback = function(v)
+  print("God Mode:", v)
+
+end,
 })
 
 local visualTab = win:CreateTab({
-	Name = "Visual",
-	Icon = "rbxassetid://104214411068348",
+Name = "Visual",
+Icon = "rbxassetid://104214411068348",
 })
 
 visualTab:CreateSection("Camera")
 
 visualTab:CreateSlider({
-	Text      = "Field of View",
-	Min       = 30,
-	Max       = 120,
-	Default   = 70,
-	Increment = 1,
-	Suffix    = "°",
-	Callback  = function(v)
-		workspace.CurrentCamera.FieldOfView = v
-	end,
+Text = "Field of View",
+Min = 30,
+Max = 120,
+Default = 70,
+Increment = 1,
+Suffix = "°",
+
+Callback = function(v)
+  workspace.CurrentCamera.FieldOfView = v
+end,
 })
 
 visualTab:CreateSection("Environment")
 
 visualTab:CreateToggle({
-	Text        = "Fullbright",
-	Description = "Removes darkness and shadows from the environment",
-	Default     = false,
-	Callback    = function(v)
-		local Lighting = game:GetService("Lighting")
-		if v then
-			Lighting.Brightness    = 2
-			Lighting.ClockTime     = 14
-			Lighting.FogEnd        = 100000
-			Lighting.GlobalShadows = false
-			Lighting.Ambient       = Color3.fromRGB(178, 178, 178)
-		else
-			Lighting.Brightness    = 1
-			Lighting.ClockTime     = 14
-			Lighting.FogEnd        = 100000
-			Lighting.GlobalShadows = true
-			Lighting.Ambient       = Color3.fromRGB(70, 70, 70)
-		end
-	end,
+Text = "Fullbright",
+Description = "Removes darkness and shadows from the environment",
+Default = false,
+
+Callback = function(v)
+  local Lighting = game:GetService("Lighting")
+  if v then
+    Lighting.Brightness = 2
+    Lighting.ClockTime = 14
+    Lighting.FogEnd = 100000
+    Lighting.GlobalShadows = false
+    Lighting.Ambient = Color3.fromRGB(178, 178, 178)
+  else
+    Lighting.Brightness = 1
+    Lighting.ClockTime = 14
+    Lighting.FogEnd = 100000
+    Lighting.GlobalShadows = true
+    Lighting.Ambient = Color3.fromRGB(70, 70, 70)
+  end
+end,
 })
 
 local settingsTab = win:CreateTab({
-	Name = "Settings",
-	Icon = "rbxassetid://119673892841288",
+Name = "Settings",
+Icon = "rbxassetid://119673892841288",
 })
 
 settingsTab:CreateSection("Theme")
 
 settingsTab:CreateDropdown({
-	Text     = "Select Theme",
-	Options  = themeNames,
-	Default  = "Midnight",
-	Callback = function(v)
-		HelixiaHUB.Theme:SetPalette(v)
-		HelixiaHUB:Notify({
-			Title    = "Theme Changed",
-			Message  = v .. " theme applied.",
-			Type     = "Success",
-			Duration = 2,
-		})
-	end,
+Text = "Select Theme",
+Options = themeNames,
+Default = "Midnight",
+
+Callback = function(v)
+  HelixiaLIB.Theme:SetPalette(v)
+  HelixiaLIB:Notify({
+  Title = "Theme Changed",
+  Message = v .. " theme applied.",
+  Type = "Success",
+  Duration = 2,
+  })
+end,
 })
 
 settingsTab:CreateSection("Window")
 
 settingsTab:CreateToggle({
-	Text        = "Background Blur",
-	Description = "Toggles the blur effect behind the window",
-	Default     = true,
-	Callback    = function(v)
-		local blur = game:GetService("Lighting"):FindFirstChild("HelixiaHUBBlur")
-		if blur then
-			blur.Enabled = v
-		end
-	end,
+Text = "Background Blur",
+Description = "Toggles the blur effect behind the window",
+Default = true,
+
+Callback = function(v)
+  local blur = game:GetService("Lighting"):FindFirstChild("HelixiaLIBBlur")
+  if blur then
+    blur.Enabled = v
+  end
+end,
 })
 
 settingsTab:CreateSection("About")
 
 settingsTab:CreateButton({
-	Text        = "Helixia HUB v2.0",
-	Description = "Built with the HelixiaHUB library.",
-	Callback    = function()
-		HelixiaHUB:Notify({
-			Title    = "Helixia HUB",
-			Message  = "v2.0 — Built with HelixiaHUB.",
-			Type     = "Info",
-			Duration = 3,
-		})
-	end,
+Text = "HELIXIA LIBRARY v2.0",
+Description = "Built with the HelixiaLIB library.",
+
+Callback = function()
+  HelixiaLIB:Notify({
+  Title = "HELIXIA LIBRARY",
+  Message = "v2.0 — Built with HelixiaLIB.",
+  Type = "Info",
+  Duration = 3,
+  })
+end,
 })
 
 task.delay(0.8, function()
-	HelixiaHUB:Notify({
-		Title    = "Helixia HUB",
-		Message  = "Welcome! Script loaded successfully.",
-		Type     = "Success",
-		Duration = 5,
-	})
+  HelixiaLIB:Notify({
+  Title = "HELIXIA LIBRARY",
+  Message = "Welcome! Script loaded successfully.",
+  Type = "Success",
+  Duration = 5,
+  })
 end)
